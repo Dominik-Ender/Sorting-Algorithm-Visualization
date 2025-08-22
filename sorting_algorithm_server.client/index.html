@@ -23,6 +23,12 @@
         }
 
         #controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            margin-top: 20px;
+            height: 200px;
             margin-bottom: 30px;
         }
 
@@ -45,17 +51,9 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Sorting Algorithm Visualization</h1>
-    <p id="stateLabel">Ready to connect...</p>
     <div id="controls">
         <div>
-            <label for="connectionUrl">Server URL:</label>
-            <input id="connectionUrl" />
-            <button id="connectButton" type="submit">Connect</button>
-        </div>
-        <p></p>
-
-        <div>
+            <h1>Sorting Algorithm Visualization</h1>
             <label for="algorithms">Choose an Algorithm:</label>
             <select id="algorithms" name="algorithms">
                 <option value="bubbleSort">BubbleSort</option>
@@ -64,8 +62,13 @@
                 <option value="quickSort">QuickSort</option>
                 <option value="selectionSort">SelectionSort</option>
             </select>
-            <button id="sendButton" type="submit" disabled>Send</button>
-            <button id="closeButton" disabled>Close Socket</button>
+            <select id="velocity" name="velocity">
+                <option value="slow">Slow</option>
+                <option value="medium">Medium</option>
+                <option value="fast">Fast</option>
+            </select>
+
+            <button id="sendButton" type="submit">Send</button>
         </div>
     </div>
     <p></p>
@@ -89,97 +92,57 @@
         var scheme = document.location.protocol === "https:" ? "wss" : "ws";
         var port = document.location.port ? (":" + document.location.port) : "";
 
-        connectionUrl.value = scheme + "://" + document.location.hostname + ":7000" + "/ws";
+        async function GetData() {
+            let algorithm = document.getElementById("algorithms").value;
+            let velocity = document.getElementById("velocity").value;
+            let speed = 750;
 
-        function updateState() {
-            function disable() {
-                sendMessage.disabled = true;
-                sendButton.disabled = true;
-                closeButton.disabled = true;
-            }
-            function enable() {
-                sendMessage.disabled = false;
-                sendButton.disabled = false;
-                closeButton.disabled = false;
+            if (velocity === 'slow') {
+                speed = 250;
+            } else if (velocity === 'medium') {
+                speed = 150;
+            } else if (velocity === 'fast') {
+                speed = 50;
             }
 
-            connectionUrl.disabled = true;
-            connectButton.disabled = true;
+            let endpoint = 'https://localhost:7000/api/test/' + algorithm;
 
-            if (!socket) {
-                disable();
-            } else {
-                switch (socket.readyState) {
-                    case WebSocket.CLOSED:
-                        stateLabel.innerHTML = "Closed";
-                        disable();
-                        connectionUrl.disabled = false;
-                        connectButton.disabled = false;
-                        break;
-                    case WebSocket.CLOSING:
-                        stateLabel.innerHTML = "Closing...";
-                        disable();
-                        break;
-                    case WebSocket.CONNECTING:
-                        stateLabel.innerHTML = "Connecting...";
-                        disable();
-                        break;
-                    case WebSocket.OPEN:
-                        stateLabel.innerHTML = "Open";
-                        enable();
-                        break;
-                    default:
-                        stateLabel.innerHTML = "Unknown WebSocket State: " + htmlEscape(socket.readyState);
-                        disable();
-                        break;
-                }
-            }
+            console.log(endpoint);
+
+            const request = await fetch(endpoint, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const events = await request.json();
+
+            events.forEach((event, index) => {
+                setTimeout(() => {
+                    renderArray(event.array);
+                }, index * speed);
+            });
         }
 
-        closeButton.onclick = function () {
-            if (!socket || socket.readyState !== WebSocket.OPEN) {
-                alert("socket not connected");
-            }
-            socket.close(1000, "Closing from client");
-        };
+        function renderArray(array) {
+            arrayContainer.innerHTML = "";
+
+            array.forEach(num => {
+                const div = document.createElement("div");
+                div.style.width = "2px";
+                div.style.height = num + "px";
+                div.style.padding = "2px";
+                div.style.border = "1px solid black";
+                div.style.backgroundColor = "lightblue";
+                div.style.textAlign = "center";
+                div.style.backgroundColor = 'rgb(' + (255 - num) + ',' + 255 + ',' + 0 + ')';
+                arrayContainer.appendChild(div);
+            });
+        }
 
         sendButton.onclick = function () {
-            if (!socket || socket.readyState !== WebSocket.OPEN) {
-                alert("socket not connected");
-            }
-            var data = sendMessage.value;
-            socket.send(data);
-        };
 
-        connectButton.onclick = function () {
-            stateLabel.innerHTML = "Connecting";
-            socket = new WebSocket(connectionUrl.value);
-            socket.onopen = function (event) {
-                updateState();
-            };
-            socket.onclose = function (event) {
-                updateState();
-            };
-            socket.onerror = updateState;
+            GetData();
 
-            socket.onmessage = (event) => {
-
-                const array = JSON.parse(event.data);
-
-                arrayContainer.innerHTML = "";
-
-                array.forEach(num => {
-                    const div = document.createElement("div");
-                    div.style.width = "2px";
-                    div.style.height = num + "px";
-                    div.style.padding = "2px";
-                    div.style.border = "1px solid black";
-                    div.style.backgroundColor = "lightblue";
-                    div.style.textAlign = "center";
-                    div.style.backgroundColor = 'rgb(' + (255 - num) + ',' + 255 + ',' + 0 + ')';
-                    arrayContainer.appendChild(div);
-                });
-            };
         };
 
         function htmlEscape(str) {

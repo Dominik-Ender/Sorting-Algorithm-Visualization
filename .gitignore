@@ -6,3 +6,8 @@
 # Build output
 bin/
 obj/
+out/
+
+# Paketverwaltung
+*.nuget/
+packages/

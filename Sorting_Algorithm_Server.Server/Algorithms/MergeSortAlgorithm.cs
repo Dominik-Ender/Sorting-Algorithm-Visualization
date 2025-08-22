@@ -1,63 +1,66 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using Events;
 
-class MergeSortAlgorithm : ISortingStrategy, IMessage {
+namespace Algorithms {
 
-    public async Task Sort(int[] array, WebSocket webSocket) {
-        await MergeSort(array, 0, array.Length - 1, webSocket);
-    }
+    class MergeSortAlgorithm {
 
-    private async Task MergeSort(int[] array, int left, int right, WebSocket webSocket) {
-        if(left < right) {
-            int middle = (left + right) / 2;
-            await MergeSort(array, left, middle, webSocket);
-            await MergeSort(array, middle + 1, right, webSocket);
-            Merge(array, left, middle, right);
+        private const int ARRAY_SIZE = 232;
+        List<Event> eventList = new List<Event>();
 
-            await SendArray(array, webSocket);
-        }
-    }
+        public List<Event> Sort() {
 
-    private void Merge(int[] array, int left, int middle, int right) {
-        int[] temp = new int[array.Length];
-        
-        for(int i = left; i <= right; i++) {
-            temp[i] = array[i];
+            int[] array = GenerateRandomArray.GetRandomArray(ARRAY_SIZE);
+
+            Event event1 = new Event(array);
+            eventList.Add(event1);
+
+            MergeSort(array, 0, array.Length - 1);
+
+            return eventList;
         }
 
-        int j = left;
-        int k = middle + 1;
-        int l = left;
+        private void MergeSort(int[] array, int left, int right) {
+            if (left < right) {
+                int middle = (left + right) / 2;
+                MergeSort(array, left, middle);
+                MergeSort(array, middle + 1, right);
+                Merge(array, left, middle, right);
 
-        while(j <= middle && k <= right) {
-            if (temp[j] <= temp[k]) {
-                array[l] = temp[j];
-                j++;
-            } else {
-                array[l] = temp[k];
-                k++;
+                Event event1 = new Event(array);
+                eventList.Add(event1);
             }
-            l++;
         }
 
-        while (j <= middle) {
-            array[l] = temp[j];
-            l++;
-            j++;
+        private void Merge(int[] array, int left, int middle, int right) {
+            int[] temp = new int[array.Length];
+
+            for (int i = left; i <= right; i++) {
+                temp[i] = array[i];
+            }
+
+            int j = left;
+            int k = middle + 1;
+            int l = left;
+
+            while (j <= middle && k <= right) {
+                if (temp[j] <= temp[k]) {
+                    array[l] = temp[j];
+                    j++;
+                } else {
+                    array[l] = temp[k];
+                    k++;
+                }
+                l++;
+            }
+
+            while (j <= middle) {
+                array[l] = temp[j];
+                l++;
+                j++;
+            }
         }
-    }
-
-    public async Task SendArray(int[] array, WebSocket webSocket) {
-        string message = JsonSerializer.Serialize(array);
-        byte[] sendMessage = Encoding.UTF8.GetBytes(message);
-
-        await webSocket.SendAsync(
-            new ArraySegment<byte>(sendMessage, 0, sendMessage.Length),
-            WebSocketMessageType.Text,
-            true,
-            CancellationToken.None);
-
-        await Task.Delay(50);
     }
 }

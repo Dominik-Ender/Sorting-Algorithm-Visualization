@@ -1,38 +1,42 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using Events;
 
-class BubbleSortAlgorithm : ISortingStrategy, IMessage {
+namespace Algorithms {
 
-    public async Task Sort(int[] array, WebSocket webSocket) {
-        await BubbleSort(array, webSocket);
-    }
+    class BubbleSortAlgorithm {
 
-    private async Task BubbleSort(int[] array, WebSocket webSocket) {
-        int n = array.Length;
-        
-        for(int i = 0; i < n - 1; i++) {
-            for(int j = 0; j < n - 1; j++) {
-                if (array[j] > array[j + 1]) {
-                    int temp = array[j];
-                    array[j] = array[j + 1];
-                    array[j + 1] = temp;
-                }
-            }
-            await SendArray(array, webSocket);
+        private const int ARRAY_SIZE = 232;
+        List<Event> eventList = new List<Event>();
+
+        public List<Event> Sort() {
+
+            int[] array = GenerateRandomArray.GetRandomArray(ARRAY_SIZE);
+
+            Event event1 = new Event(array);
+            eventList.Add(event1);
+
+            BubbleSort(array);
+
+            return eventList;
         }
-    }
 
-    public async Task SendArray(int[] array, WebSocket webSocket) {
-        string message = JsonSerializer.Serialize(array);
-        byte[] sendMessage = Encoding.UTF8.GetBytes(message);
+        private void BubbleSort(int[] array) {
+            int n = array.Length;
 
-        await webSocket.SendAsync(
-            new ArraySegment<byte>(sendMessage, 0, sendMessage.Length),
-            WebSocketMessageType.Text,
-            true,
-            CancellationToken.None);
+            for (int i = 0; i < n - 1; i++) {
+                for (int j = 0; j < n - 1; j++) {
+                    if (array[j] > array[j + 1]) {
+                        int temp = array[j];
+                        array[j] = array[j + 1];
+                        array[j + 1] = temp;
+                    }
+                }
 
-        await Task.Delay(50);
+                Event event1 = new Event((int[])array.Clone());
+                eventList.Add(event1);
+            }
+        }
     }
 }

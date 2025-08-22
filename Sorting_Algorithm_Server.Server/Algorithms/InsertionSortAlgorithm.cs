@@ -1,40 +1,42 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using Events;
 
-class InsertionSortAlgorithm : ISortingStrategy, IMessage {
+namespace Algorithms {
+    class InsertionSortAlgorithm {
 
-    public async Task Sort(int[] array, WebSocket webSocket) {
-        await InsertionSort(array, webSocket);
-    }
+        private const int ARRAY_SIZE = 232;
+        List<Event> eventList = new List<Event>();
 
-    private async Task InsertionSort(int[] array, WebSocket webSocket) {
-        int n = array.Length;
-        for(int i = 1; i < n; ++i) {
-            int key = array[i];
-            int j = i - 1;
+        public List<Event> Sort() {
 
-            while(j >= 0 && array[j] > key) {
-                array[j + 1] = array[j];
-                j = j - 1;
-            }
+            int[] array = GenerateRandomArray.GetRandomArray(ARRAY_SIZE);
 
-            array[j + 1] = key;
+            Event event1 = new Event(array);
+            eventList.Add(event1);
 
-            await SendArray(array, webSocket);
+            InsertionSort(array);
+
+            return eventList;
         }
-    }
 
-    public async Task SendArray(int[] array, WebSocket webSocket) {
-        string message = JsonSerializer.Serialize(array);
-        byte[] sendMessage = Encoding.UTF8.GetBytes(message);
+        private void InsertionSort(int[] array) {
+            int n = array.Length;
+            for (int i = 1; i < n; ++i) {
+                int key = array[i];
+                int j = i - 1;
 
-        await webSocket.SendAsync(
-            new ArraySegment<byte>(sendMessage, 0, sendMessage.Length),
-            WebSocketMessageType.Text,
-            true,
-            CancellationToken.None);
+                while (j >= 0 && array[j] > key) {
+                    array[j + 1] = array[j];
+                    j = j - 1;
+                }
 
-        await Task.Delay(50);
+                array[j + 1] = key;
+
+                Event event1 = new Event((int[])array.Clone());
+                eventList.Add(event1);
+            }
+        }
     }
 }

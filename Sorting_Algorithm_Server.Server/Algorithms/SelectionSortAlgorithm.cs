@@ -1,42 +1,45 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using Events;
 
-class SelectionSortAlgorithm : ISortingStrategy, IMessage {
+namespace Algorithms {
 
-    public async Task Sort(int[] array, WebSocket webSocket) {
-        await SelectionSort(array, webSocket);
-    }
+    class SelectionSortAlgorithm {
 
-    private async Task SelectionSort(int[] array, WebSocket webSocket) {
-        int n = array.Length;
-        for(int i = 0; i < n - 1; i++) {
-            int min_idx = i;
+        private const int ARRAY_SIZE = 232;
+        List<Event> eventList = new List<Event>();
 
-            for(int j = i + 1; j < n; j++) {
-                if (array[j] < array[min_idx]) {
-                    min_idx = j;
-                }
-            }
+        public List<Event> Sort() {
 
-            int temp = array[i];
-            array[i] = array[min_idx];
-            array[min_idx] = temp;
+            int[] array = GenerateRandomArray.GetRandomArray(ARRAY_SIZE);
 
-            await SendArray(array, webSocket);
+            Event event1 = new Event(array);
+            eventList.Add(event1);
+
+            SelectionSort(array);
+
+            return eventList;
         }
-    }
 
-    public async Task SendArray(int[] array, WebSocket webSocket) {
-        string message = JsonSerializer.Serialize(array);
-        byte[] sendMessage = Encoding.UTF8.GetBytes(message);
+        private void SelectionSort(int[] array) {
+            int n = array.Length;
+            for (int i = 0; i < n - 1; i++) {
+                int min_idx = i;
 
-        await webSocket.SendAsync(
-            new ArraySegment<byte>(sendMessage, 0, sendMessage.Length),
-            WebSocketMessageType.Text,
-            true,
-            CancellationToken.None);
+                for (int j = i + 1; j < n; j++) {
+                    if (array[j] < array[min_idx]) {
+                        min_idx = j;
+                    }
+                }
 
-        await Task.Delay(50);
+                int temp = array[i];
+                array[i] = array[min_idx];
+                array[min_idx] = temp;
+
+                Event event1 = new Event((int[])array.Clone());
+                eventList.Add(event1);
+            }
+        }
     }
 }
