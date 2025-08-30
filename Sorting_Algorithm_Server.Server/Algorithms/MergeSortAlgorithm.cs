@@ -5,17 +5,16 @@ using Events;
 
 namespace Algorithms {
 
-    class MergeSortAlgorithm {
+    class MergeSortAlgorithm : ISortingStrategy {
 
-        private const int ARRAY_SIZE = 232;
         List<Event> eventList = new List<Event>();
 
-        public List<Event> Sort() {
+        public List<Event> GetEventList() {
 
-            int[] array = GenerateRandomArray.GetRandomArray(ARRAY_SIZE);
+            int[] array = GenerateRandomArray.GetRandomArray();
 
-            Event event1 = new Event(array);
-            eventList.Add(event1);
+            Event _event = new Event(array, 0);
+            eventList.Add(_event);
 
             MergeSort(array, 0, array.Length - 1);
 
@@ -29,8 +28,8 @@ namespace Algorithms {
                 MergeSort(array, middle + 1, right);
                 Merge(array, left, middle, right);
 
-                Event event1 = new Event(array);
-                eventList.Add(event1);
+                Event _event = new Event((int[])array.Clone(), middle);
+                eventList.Add(_event);
             }
         }
 
