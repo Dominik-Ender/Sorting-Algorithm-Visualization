@@ -1,9 +1,9 @@
 # Sorting Algorithm Visualizer
 
-Backend written in C#. 
-Contains variety of sorting algorithms.
-Choose the velocity **SLOW | MEDIUM | FAST**.
-Turn on volume for sound.
+Backend written in C#. <br>
+Contains variety of sorting algorithms. <br>
+Choose the velocity **SLOW | MEDIUM | FAST**. <br>
+Turn on volume for sound. <br>
 
 ## Features
 - Supported Algorithms:
