@@ -5,23 +5,22 @@ Contains variety of sorting algorithms. <br>
 Choose the velocity **SLOW | MEDIUM | FAST**. <br>
 Turn on volume for sound. <br>
 
-## Features
-- Supported Algorithms:
-  - Bubble Sort
-  - Bucket Sort
-  - Comb Sort
-  - Counting Sort
-  - Cycle Sort
-  - Heap Sort
-  - Insertion Sort
-  - Intro Sort
-  - Merge Sort
-  - Pigeonhole Sort
-  - Quick Sort
-  - Radix Sort
-  - Selection Sort
-  - Shell Sort
-  - Tim Sort
+## Supported Algorithms
+- Bubble Sort
+- Bucket Sort
+- Comb Sort
+- Counting Sort
+- Cycle Sort
+- Heap Sort
+- Insertion Sort
+- Intro Sort
+- Merge Sort
+- Pigeonhole Sort
+- Quick Sort
+- Radix Sort
+- Selection Sort
+- Shell Sort
+- Tim Sort
 
 ## Technologies
 - **C# / .NET**
