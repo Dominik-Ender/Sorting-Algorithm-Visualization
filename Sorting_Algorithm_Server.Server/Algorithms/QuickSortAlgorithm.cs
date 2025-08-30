@@ -5,17 +5,16 @@ using Events;
 
 namespace Algorithms {
 
-    class QuickSortAlgorithm {
+    class QuickSortAlgorithm : ISortingStrategy {
 
-        private const int ARRAY_SIZE = 232;
         List<Event> eventList = new List<Event>();
 
-        public List<Event> Sort() {
+        public List<Event> GetEventList() {
 
-            int[] array = GenerateRandomArray.GetRandomArray(ARRAY_SIZE);
+            int[] array = GenerateRandomArray.GetRandomArray();
 
-            Event event1 = new Event(array);
-            eventList.Add(event1);
+            Event _event = new Event(array, 0);
+            eventList.Add(_event);
 
             QuickSort(array, 0, array.Length - 1);
 
@@ -48,8 +47,8 @@ namespace Algorithms {
             if (low < high) {
                 int pi = Partition(array, low, high);
 
-                Event event1 = new Event((int[])array.Clone());
-                eventList.Add(event1);
+                Event _event = new Event((int[])array.Clone(), pi);
+                eventList.Add(_event);
 
                 QuickSort(array, low, pi - 1);
                 QuickSort(array, pi + 1, high);

@@ -10,11 +10,11 @@ namespace Algorithms {
         private const int ARRAY_SIZE = 232;
         List<Event> eventList = new List<Event>();
 
-        public List<Event> Sort() {
+        public List<Event> GetEventList() {
 
-            int[] array = GenerateRandomArray.GetRandomArray(ARRAY_SIZE);
+            int[] array = GenerateRandomArray.GetRandomArray();
 
-            Event event1 = new Event(array);
+            Event event1 = new Event(array, 0);
             eventList.Add(event1);
 
             BubbleSort(array);
@@ -34,8 +34,8 @@ namespace Algorithms {
                     }
                 }
 
-                Event event1 = new Event((int[])array.Clone());
-                eventList.Add(event1);
+                Event _event = new Event((int[])array.Clone(), i);
+                eventList.Add(_event);
             }
         }
     }

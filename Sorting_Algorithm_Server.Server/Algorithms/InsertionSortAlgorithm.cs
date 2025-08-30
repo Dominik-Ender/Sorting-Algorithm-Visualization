@@ -4,17 +4,17 @@ using System.Text.Json;
 using Events;
 
 namespace Algorithms {
-    class InsertionSortAlgorithm {
+    class InsertionSortAlgorithm : ISortingStrategy {
 
         private const int ARRAY_SIZE = 232;
         List<Event> eventList = new List<Event>();
 
-        public List<Event> Sort() {
+        public List<Event> GetEventList() {
 
-            int[] array = GenerateRandomArray.GetRandomArray(ARRAY_SIZE);
+            int[] array = GenerateRandomArray.GetRandomArray();
 
-            Event event1 = new Event(array);
-            eventList.Add(event1);
+            Event _event = new Event(array, 0);
+            eventList.Add(_event);
 
             InsertionSort(array);
 
@@ -34,8 +34,8 @@ namespace Algorithms {
 
                 array[j + 1] = key;
 
-                Event event1 = new Event((int[])array.Clone());
-                eventList.Add(event1);
+                Event _event = new Event((int[])array.Clone(), i);
+                eventList.Add(_event);
             }
         }
     }
