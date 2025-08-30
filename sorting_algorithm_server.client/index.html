@@ -80,9 +80,9 @@
             </select>
             <label for="algorithms">velocity:</label>
             <select id="velocity" name="velocity">
-                <option value="slow">Slow</option>
-                <option value="medium">Medium</option>
                 <option value="fast">Fast</option>
+                <option value="medium">Medium</option>
+                <option value="slow">Slow</option>
             </select>
 
             <button id="sendButton" type="submit">Send</button>
@@ -193,7 +193,7 @@
             let freq = minFreq + (index / total) * (maxFreq - minFreq);
 
             const oscillator = audioCtx.createOscillator();
-            oscillator.type = "square"; // "square" klingt auch cool
+            oscillator.type = "square"; 
             oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
             const gainNode = audioCtx.createGain();
