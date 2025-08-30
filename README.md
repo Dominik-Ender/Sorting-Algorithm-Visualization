@@ -1,20 +1,32 @@
 # Sorting Algorithm Visualizer
 
-Backend written in C# does sends the sorting steps to the website. 
+Backend written in C#. 
+Contains variety of sorting algorithms.
+Choose the velocity **SLOW | MEDIUM | FAST**.
+Turn on volume for sound.
 
 ## Features
 - Supported Algorithms:
   - Bubble Sort
+  - Bucket Sort
+  - Comb Sort
+  - Counting Sort
+  - Cycle Sort
+  - Heap Sort
   - Insertion Sort
-  - Selection Sort
+  - Intro Sort
   - Merge Sort
+  - Pigeonhole Sort
   - Quick Sort
+  - Radix Sort
+  - Selection Sort
+  - Shell Sort
+  - Tim Sort
 
 ## Technologies
 - **C# / .NET**
-- **System.Net.WebSockets**
+- **REST**
 - **JSON-Serialisierung** 
-- **HTML / JavaScript**
 
 ## Start Application
 - go to **<Sorting_Algorithm_Visualization\Sorting_Algorithm_Server.Server>**
