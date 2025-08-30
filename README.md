@@ -1,6 +1,7 @@
 # Sorting Algorithm Visualizer
 
 Backend written in C#. <br>
+Sorting algorithms create events. These events are send to the front-end and will be visualized. <br>
 Contains variety of sorting algorithms. <br>
 Choose the velocity **SLOW | MEDIUM | FAST**. <br>
 Turn on volume for sound. <br>
