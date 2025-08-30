@@ -8,18 +8,19 @@
             border: 0
         }
 
-        .commslog-data {
-            font-family: Consolas, Courier New, Courier, monospace;
+        select {
+            width: 10rem;
+            background-color: #ffffff;
+            border: #bbbbbb 2px solid;
+            font: 18px sans-serif;
         }
 
-        .commslog-server {
-            background-color: red;
-            color: white
+        select > option {
+            background-color: #ffffff;
         }
 
-        .commslog-client {
-            background-color: green;
-            color: white
+        #sendButton {
+            font: 18px sans-serif;
         }
 
         #controls {
@@ -29,7 +30,8 @@
             justify-content: flex-start;
             margin-top: 20px;
             height: 200px;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
+            font: 20px sans-serif;
         }
 
         #arraySection {
@@ -51,17 +53,32 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <div id="arraySection">
+        <div id="arrayContainer"></div>
+    </div>
+
     <div id="controls">
         <div>
             <h1>Sorting Algorithm Visualization</h1>
             <label for="algorithms">Choose an Algorithm:</label>
             <select id="algorithms" name="algorithms">
                 <option value="bubbleSort">BubbleSort</option>
+                <option value="bucketSort">BucketSort</option>
+                <option value="combSort">CombSort</option>
+                <option value="countingSort">CountingSort</option>
+                <option value="cycleSort">CycleSort</option>
+                <option value="heapSort">HeapSort</option>
                 <option value="insertionSort">InsertionSort</option>
+                <option value="introSort">IntroSort</option>
                 <option value="mergeSort">MergeSort</option>
+                <option value="pigeonholeSort">PigeonholeSort</option>
                 <option value="quickSort">QuickSort</option>
+                <option value="radixSort">RadixSort</option>
                 <option value="selectionSort">SelectionSort</option>
+                <option value="shellSort">ShellSort</option>
+                <option value="timSort">TimSort</option>
             </select>
+            <label for="algorithms">velocity:</label>
             <select id="velocity" name="velocity">
                 <option value="slow">Slow</option>
                 <option value="medium">Medium</option>
@@ -73,29 +90,37 @@
     </div>
     <p></p>
 
-    <div id="arraySection">
-        <div id="arrayContainer"></div>
-    </div>
-    
     <script>
         const arrayContainer = document.getElementById("arrayContainer");
 
-        var connectionUrl = document.getElementById("connectionUrl");
-        var connectButton = document.getElementById("connectButton");
         var stateLabel = document.getElementById("stateLabel");
         var sendMessage = document.getElementById("algorithms");
         var sendButton = document.getElementById("sendButton");
-        var commsLog = document.getElementById("commsLog");
-        var closeButton = document.getElementById("closeButton");
-        var socket;
 
         var scheme = document.location.protocol === "https:" ? "wss" : "ws";
         var port = document.location.port ? (":" + document.location.port) : "";
+        var wait = false;
+
+        const colors = [
+            [255, 185, 8],
+            [250, 163, 7],
+            [244, 140, 6],
+            [232, 93, 4],
+            [220, 47, 2],
+            [208, 0, 0],
+            [157, 2, 8],
+            [106, 4, 15],
+            [55, 6, 23],
+            [3, 7, 30]
+        ];
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         async function GetData() {
             let algorithm = document.getElementById("algorithms").value;
             let velocity = document.getElementById("velocity").value;
             let speed = 750;
+            wait = true;
 
             if (velocity === 'slow') {
                 speed = 250;
@@ -105,9 +130,7 @@
                 speed = 50;
             }
 
-            let endpoint = 'https://localhost:7000/api/test/' + algorithm;
-
-            console.log(endpoint);
+            let endpoint = 'https://localhost:7000/sorting/' + algorithm;
 
             const request = await fetch(endpoint, {
                 method: 'GET',
@@ -119,6 +142,12 @@
             events.forEach((event, index) => {
                 setTimeout(() => {
                     renderArray(event.array);
+
+                    playSound(event.index, event.array.length);
+
+                    if (index === events.length - 1) {
+                        wait = false;
+                    }
                 }, index * speed);
             });
         }
@@ -126,23 +155,62 @@
         function renderArray(array) {
             arrayContainer.innerHTML = "";
 
-            array.forEach(num => {
+            array.forEach((num, index) => {
                 const div = document.createElement("div");
                 div.style.width = "2px";
                 div.style.height = num + "px";
                 div.style.padding = "2px";
                 div.style.border = "1px solid black";
-                div.style.backgroundColor = "lightblue";
                 div.style.textAlign = "center";
-                div.style.backgroundColor = 'rgb(' + (255 - num) + ',' + 255 + ',' + 0 + ')';
+                div.style.backgroundColor = getColorForIndex(index, array.length);
                 arrayContainer.appendChild(div);
             });
+        } 
+
+        function getColorForIndex(index, total) {
+            let segments = colors.length - 1;
+            let segmentSize = total / segments;
+
+            let segmentIndex = Math.floor(index / segmentSize);
+            if (segmentIndex >= segments) segmentIndex = segments - 1;
+
+            let t = (index % segmentSize) / segmentSize;
+
+            let c1 = colors[segmentIndex];
+            let c2 = colors[segmentIndex + 1];
+
+            let r = Math.round(c1[0] + (c2[0] - c1[0]) * t);
+            let g = Math.round(c1[1] + (c2[1] - c1[1]) * t);
+            let b = Math.round(c1[2] + (c2[2] - c1[2]) * t);
+
+            return `rgb(${r},${g},${b})`;
+        }
+
+        function playSound(index, total) {
+            let minFreq = 200;
+            let maxFreq = 1200;
+
+            let freq = minFreq + (index / total) * (maxFreq - minFreq);
+
+            const oscillator = audioCtx.createOscillator();
+            oscillator.type = "square"; // "square" klingt auch cool
+            oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            const gainNode = audioCtx.createGain();
+            gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime); 
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2); 
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            oscillator.start();
+            oscillator.stop(audioCtx.currentTime + 0.2); 
         }
 
         sendButton.onclick = function () {
-
-            GetData();
-
+            if (!wait) {
+                GetData();
+            }
         };
 
         function htmlEscape(str) {

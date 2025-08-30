@@ -1,8 +1,9 @@
 class GenerateRandomArray {
 
-    public static int[] GetRandomArray(int numberOfElements) {
+    public static int[] GetRandomArray() {
         Random random = new();
 
+        int numberOfElements = 232;
         int[] array = new int[numberOfElements];
 
         for(int i = 0; i < array.Length; i++) {

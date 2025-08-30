@@ -67,6 +67,15 @@
 
         connectionUrl.value = scheme + "://" + document.location.hostname + port + "/ws";
 
+        async function GetData() {
+            let endpoint = 'https://localhost:7000/api/test/bubbleSort';
+            const request = await fetch(endpoint);
+            const response = await request.json();
+
+            console.log(response);
+
+        }
+
         function updateState() {
             function disable() {
                 sendMessage.disabled = true;
