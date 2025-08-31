@@ -1,40 +1,39 @@
 using Events;
 
 namespace Algorithms {
-    class ShellSortAlgorithm {
+    class ShellSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        private const int ARRAY_SIZE = 232;
-        List<Event> eventList = new List<Event>();
+        private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
-            int[] array = GenerateRandomArray.GetRandomArray();
-
-            Event _event = new Event(array, 0);
-            eventList.Add(_event);
-
+            CreateEvent(array, 0);
             ShellSort(array);
 
             return eventList;
         }
 
         private void ShellSort(int[] array) {
-            for(int interval = array.Length / 2; interval > 0; interval /= 2) {
-                for(int i = interval; i < array.Length; i++) {
-                    var currentKey = array[i];
-                    var k = i;
+            for (int interval = array.Length / 2; interval > 0; interval /= 2) {
+                for (int i = interval; i < array.Length; i++) {
+                    int currentKey = array[i];
+                    int k = i;
 
-                    while(k >= interval && array[k - interval] > currentKey) {
+                    while (k >= interval && array[k - interval] > currentKey) {
                         array[k] = array[k - interval];
                         k -= interval;
                     }
-
                     array[k] = currentKey;
 
-                    Event _event = new Event((int[])array.Clone(), i);
-                    eventList.Add(_event);
+                    CreateEvent(array, i);
                 }
             }
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }

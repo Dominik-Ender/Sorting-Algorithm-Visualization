@@ -1,19 +1,15 @@
-// https://www.geeksforgeeks.org/dsa/cycle-sort/
 using Events;
 
 namespace Algorithms {
 
-    class CycleSortAlgorithm : ISortingStrategy {
+    class CycleSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        List<Event> eventList = new List<Event>();
+        private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
-            int[] array = GenerateRandomArray.GetRandomArray();
-
-            Event _event = new Event(array, 0);
-            eventList.Add(_event);
-
+            CreateEvent(array, 0);
             CycleSort(array);
 
             return eventList;
@@ -22,18 +18,17 @@ namespace Algorithms {
         private void CycleSort(int[] array) {
             int writes = 0;
 
-            for (int cycle_start = 0; cycle_start <= array.Length - 2; cycle_start++) {
-                int item = array[cycle_start];
+            for (int cycleStart = 0; cycleStart <= array.Length - 2; cycleStart++) {
+                int item = array[cycleStart];
+                int pos = cycleStart;
 
-                int pos = cycle_start;
-
-                for (int i = cycle_start + 1; i < array.Length; i++) {
+                for (int i = cycleStart + 1; i < array.Length; i++) {
                     if (array[i] < item) {
                         pos++;
                     }
                 }
 
-                if (pos == cycle_start) {
+                if (pos == cycleStart) {
                     continue;
                 }
 
@@ -41,20 +36,19 @@ namespace Algorithms {
                     pos += 1;
                 }
 
-                if (pos != cycle_start) {
+                if (pos != cycleStart) {
                     int temp = item;
                     item = array[pos];
                     array[pos] = temp;
                     writes++;
 
-                    Event _event = new Event((int[])array.Clone(), cycle_start);
-                    eventList.Add(_event);
+                    CreateEvent(array, cycleStart);
                 }
 
-                while (pos != cycle_start) {
-                    pos = cycle_start;
+                while (pos != cycleStart) {
+                    pos = cycleStart;
 
-                    for (int i = cycle_start + 1; i < array.Length; i++) {
+                    for (int i = cycleStart + 1; i < array.Length; i++) {
                         if (array[i] < item) {
                             pos += 1;
                         }
@@ -70,11 +64,15 @@ namespace Algorithms {
                         array[pos] = temp;
                         writes++;
 
-                        Event _event = new Event((int[])array.Clone(), cycle_start);
-                        eventList.Add(_event);
+                        CreateEvent(array, cycleStart);
                     }
                 }
             }
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }

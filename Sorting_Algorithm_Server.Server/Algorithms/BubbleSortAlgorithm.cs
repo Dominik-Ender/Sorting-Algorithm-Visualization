@@ -1,22 +1,15 @@
-using System.Net.WebSockets;
-using System.Text;
-using System.Text.Json;
 using Events;
 
 namespace Algorithms {
 
-    class BubbleSortAlgorithm {
+    class BubbleSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        private const int ARRAY_SIZE = 232;
-        List<Event> eventList = new List<Event>();
+        private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
-            int[] array = GenerateRandomArray.GetRandomArray();
-
-            Event event1 = new Event(array, 0);
-            eventList.Add(event1);
-
+            CreateEvent(array, 0);
             BubbleSort(array);
 
             return eventList;
@@ -33,10 +26,13 @@ namespace Algorithms {
                         array[j + 1] = temp;
                     }
                 }
-
-                Event _event = new Event((int[])array.Clone(), i);
-                eventList.Add(_event);
+                CreateEvent(array, i);
             }
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }

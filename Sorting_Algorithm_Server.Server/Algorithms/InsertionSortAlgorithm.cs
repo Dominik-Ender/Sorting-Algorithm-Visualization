@@ -1,21 +1,14 @@
-using System.Net.WebSockets;
-using System.Text;
-using System.Text.Json;
 using Events;
 
 namespace Algorithms {
-    class InsertionSortAlgorithm : ISortingStrategy {
+    class InsertionSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        private const int ARRAY_SIZE = 232;
-        List<Event> eventList = new List<Event>();
+        private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
-            int[] array = GenerateRandomArray.GetRandomArray();
-
-            Event _event = new Event(array, 0);
-            eventList.Add(_event);
-
+            CreateEvent(array, 0);
             InsertionSort(array);
 
             return eventList;
@@ -31,12 +24,15 @@ namespace Algorithms {
                     array[j + 1] = array[j];
                     j = j - 1;
                 }
-
                 array[j + 1] = key;
 
-                Event _event = new Event((int[])array.Clone(), i);
-                eventList.Add(_event);
+                CreateEvent(array, i);
             }
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }

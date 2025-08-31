@@ -1,6 +1,7 @@
 class GenerateRandomArray {
 
     public static int[] GetRandomArray() {
+        
         Random random = new();
 
         int numberOfElements = 232;
@@ -16,7 +17,6 @@ class GenerateRandomArray {
 
             array[i] = array[j];
             array[j] = temp;
-
         }
         return array;
     }

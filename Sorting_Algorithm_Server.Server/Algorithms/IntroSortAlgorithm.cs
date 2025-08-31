@@ -1,131 +1,127 @@
-// https://www.geeksforgeeks.org/dsa/introsort-or-introspective-sort/
 using Events;
 
 namespace Algorithms {
 
-    class IntroSortAlgorithm : ISortingStrategy {
+    class IntroSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        private int n = 0;
-        private int[] array = GenerateRandomArray.GetRandomArray();
-        List<Event> eventList = new List<Event>();
         private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
+            CreateEvent(array, 0);
 
-            _event = new Event(array, 0);
-            eventList.Add(_event);
-
-            int maximumdepth = Convert.ToInt16(2 * Math.Log(array.Length));
+            // int maximumdepth = (int)(2 * Math.Floor(Math.Log(n) / Math.Log(2)));
+            int maximumdepth = (int)(2 * Math.Floor(Math.Log2(array.Length)));
 
             IntroSort(array, 0, array.Length - 1, maximumdepth);
 
             return eventList;
         }
 
-        private void IntroSort(int[] array, int start, int end, int maxdepth) {
-            int len = Length(array, start, end);
+        private void IntroSort(int[] array, int start, int end, int maximumDepth) {
+            int length = end - start + 1;
 
-            if (len <= 1) {
+            if (length <= 1) {
                 return;
-            } else if (maxdepth == 0) {
-                Heapsort(array);
-
+            } else if (length <= 16) {
+                InsertionSort(array, start, end);
+            } else if (maximumDepth == 0) {
+                HeapsortRange(array, start, end);
             } else {
-                int partitionpos = Partition(array, start, array.Length - 1);
+                int partitionPosition = Partition(array, start, end);
 
-                IntroSort(array, 0, partitionpos - 1, maxdepth - 1);
-
-                IntroSort(array, partitionpos + 1, len, maxdepth - 1);
+                IntroSort(array, start, partitionPosition - 1, maximumDepth - 1);
+                IntroSort(array, partitionPosition + 1, end, maximumDepth - 1);
             }
-        }
-
-        private int Length(int[] array, int beginning, int ending) {
-            int len = 0;
-
-            if (beginning <= ending) {
-                for (int i = beginning; i <= ending; i++) {
-                    len++;
-                }
-            }
-            return len;
         }
 
         private int Partition(int[] array, int start, int end) {
-            int tem;
-            int left = start; int right = end;
-            int pivot = array[start];  
+            int pivot = array[start];
+            int left = start + 1;
+            int right = end;
 
-            while (left < right) {
-                while (array[left] < pivot) {
+            while (true) {
+                while (left <= right && array[left] <= pivot) {
                     left++;
                 }
 
-                while (array[right] > pivot) {
+                while (left <= right && array[right] >= pivot) {
                     right--;
                 }
 
-                if (left < right) {
-                    tem = array[left];
-                    array[left] = array[right];
-                    array[right] = tem;
-
-                    _event = new Event((int[])array.Clone(), left);
-                    eventList.Add(_event);
-
-                    if (array[left] == array[right]) { 
-                    left++;
-                    }
-                } else {
-                    return right;
+                if (left > right) {
+                    break;
                 }
+
+                Swap(array, left, right);
+                CreateEvent(array, left);
             }
+            Swap(array, start, right);
+            CreateEvent(array, right);
+
             return right;
         }
 
-        private void Heapsort(int[] array) {
-            int heapsize = array.Length; 
+        private void Swap(int[] array, int i, int j) {
+            int temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
 
-            for (int m = (heapsize / 2) - 1; m >= 0; m--) {
-                Heapify(array, heapsize, m);
-            }
+        private void InsertionSort(int[] array, int start, int end) {
+            for (int i = start + 1; i <= end; i++) {
+                int key = array[i];
+                int j = i - 1;
 
-            for (int n = array.Length - 1; n >= 0; n--) {
-                int temp = array[n];
-                array[n] = array[0];
-                array[0] = temp;
-
-                _event = new Event((int[])array.Clone(), temp);
-                eventList.Add(_event);
-
-                --heapsize;
-                Heapify(array, heapsize, 0);
+                while (j >= start && array[j] > key) {
+                    array[j + 1] = array[j];
+                    CreateEvent(array, j + 1);
+                    j--;
+                }
+                array[j + 1] = key;
+                CreateEvent(array, j + 1);
             }
         }
 
-        private void Heapify(int[] array, int x, int y) {
-            int max = 0;
-            int r = (y + 1) * 2; 
-            int l = ((y + 1) * 2) - 1;
+        private void HeapsortRange(int[] array, int start, int end) {
+            int heapSize = end - start + 1;
 
-            if (l < x && array[l] > array[y]) {
-                max = l;
-            } else {
-                max = y;
+            for (int i = start + heapSize / 2 - 1; i >= start; i--) {
+                HeapifyRange(array, start, heapSize, i);
             }
-            if (r < x && array[r] > array[max]) {
-                max = r;
-            }
-            if (max != y) {
-                int temp;
-                temp = array[y];
-                array[y] = array[max];
-                array[max] = temp;
 
-                _event = new Event((int[])array.Clone(), max);
-                eventList.Add(_event);
-
-                Heapify(array, x, max);
+            for (int i = end; i > start; i--) {
+                Swap(array, start, i);
+                CreateEvent(array, i);
+                heapSize--;
+                HeapifyRange(array, start, heapSize, start);
             }
+        }
+
+        private void HeapifyRange(int[] array, int start, int heapSize, int rootIndex) {
+            int largest = rootIndex;
+            int left = 2 * (rootIndex - start) + 1 + start;
+            int right = 2 * (rootIndex - start) + 2 + start;
+
+            if (left < start + heapSize && array[left] > array[largest]) {
+                largest = left;
+            }
+
+            if (right < start + heapSize && array[right] > array[largest]) {
+                largest = right;
+            }
+
+            if (largest != rootIndex) {
+                Swap(array, rootIndex, largest);
+                CreateEvent(array, largest);
+                HeapifyRange(array, start, heapSize, largest);
+            }
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }

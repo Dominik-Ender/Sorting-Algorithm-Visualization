@@ -1,26 +1,22 @@
-// https://code-maze.com/csharp-radix-sort/
 using Events;
 
 namespace Algorithms {
 
-    class RadixSortAlgorithm : ISortingStrategy {
+    class RadixSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        List<Event> eventList = new List<Event>();
+        private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
-            int[] array = GenerateRandomArray.GetRandomArray();
-
-            Event _event = new Event(array, 0);
-            eventList.Add(_event);
-
+            CreateEvent(array, 0);
             RadixSort(array);
 
             return eventList;
         }
 
         private void RadixSort(int[] array) {
-            var max = GetMax(array);
+            int max = GetMax(array);
 
             for(int exponent = 1; max / exponent > 0; exponent *= 10) {
                 CountingSort(array, exponent);
@@ -28,9 +24,9 @@ namespace Algorithms {
         }
 
         private int GetMax(int[] array) {
-            var max = array[0];
+            int max = array[0];
 
-            for(int i = 1; i < array.Length; i++) {
+            for (int i = 1; i < array.Length; i++) {
                 if (array[i] > max) {
                     max = array[i];
                 }
@@ -39,37 +35,36 @@ namespace Algorithms {
         }
 
         private void CountingSort(int[] array, int exponent) {
-            var outputArray = new int[array.Length];
-            var occurences = new int[10];
+            int[] outputArray = new int[array.Length];
+            int[] occurences = new int[10];
 
-            for(int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10; i++) {
                 occurences[i] = 0;
             }
 
-            for(int i = 0; i < array.Length; i++) {
+            for (int i = 0; i < array.Length; i++) {
                 occurences[(array[i] / exponent) % 10]++;
             }
 
-            for(int i = 1; i < 10; i++) {
+            for (int i = 1; i < 10; i++) {
                 occurences[i] += occurences[i - 1];
             }
 
-            for(int i = array.Length - 1; i >= 0; i--) {
+            for (int i = array.Length - 1; i >= 0; i--) {
                 outputArray[occurences[(array[i] / exponent) % 10] - 1] = array[i];
                 occurences[(array[i] / exponent) % 10]--;
             }
 
-            for(int i = 0; i < array.Length; i++) {
+            for (int i = 0; i < array.Length; i++) {
                 array[i] = outputArray[i];
 
-                Event _event = new Event((int[])array.Clone(), 0);
-                eventList.Add(_event);
+                CreateEvent(array, i);
             }
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }
-
-
-
-
-

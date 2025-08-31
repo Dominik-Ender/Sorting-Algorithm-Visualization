@@ -1,26 +1,22 @@
-// https://code-maze.com/bucket-sort-csharp/
 using Events;
 
 namespace Algorithms {
 
-    class BucketSortAlgorithm : ISortingStrategy {
+    class BucketSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        List<Event> eventList = new List<Event>();
+        private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
-            int[] array = GenerateRandomArray.GetRandomArray();
-
-            Event _event = new Event(array, 0);
-            eventList.Add(_event);
-
+            CreateEvent(array, 0);
             BucketSort(array);
             
             return eventList;
         }
 
         public void BucketSort(int[] array) {
-            if(array == null || array.Length <= 1) {
+            if (array == null || array.Length <= 1) {
                 return;
             }
 
@@ -39,7 +35,7 @@ namespace Algorithms {
 
             LinkedList<int>[] bucket = new LinkedList<int>[maxValue - minValue + 1];
 
-            for(int i = 0; i < array.Length; i++) {
+            for (int i = 0; i < array.Length; i++) {
                 if (bucket[array[i] - minValue] == null) {
                     bucket[array[i] - minValue] = new LinkedList<int>();
                 }
@@ -49,7 +45,7 @@ namespace Algorithms {
 
             var index = 0;
 
-            for(int i = 0; i < bucket.Length; i++) {
+            for (int i = 0; i < bucket.Length; i++) {
                 if (bucket[i] != null) {
                     LinkedListNode<int> node = bucket[i].First;
 
@@ -58,11 +54,15 @@ namespace Algorithms {
                         node = node.Next;
                         index++;
 
-                        Event _event = new Event((int[])array.Clone(), index);
-                        eventList.Add(_event);
+                        CreateEvent(array, index);
                     }
                 }
             }
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }

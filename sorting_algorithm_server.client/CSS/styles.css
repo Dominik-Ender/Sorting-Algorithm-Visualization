@@ -1,0 +1,45 @@
+table {
+    border: 0
+}
+
+select {
+    width: 10rem;
+    background-color: #ffffff;
+    border: #bbbbbb 2px solid;
+    font: 18px sans-serif;
+}
+
+    select > option {
+        background-color: #ffffff;
+    }
+
+#sendButton {
+    font: 18px sans-serif;
+}
+
+#controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 20px;
+    height: 200px;
+    margin-bottom: 50px;
+    font: 20px sans-serif;
+}
+
+#arraySection {
+    margin-top: 30px;
+    padding: 5px;
+    border: 2px solid #ccc;
+    width: 1240px;
+    height: 240px
+}
+
+#arrayContainer {
+    display: flex;
+    gap: 0;
+    align-items: flex-end;
+    width: 600px;
+    height: 240px;
+}

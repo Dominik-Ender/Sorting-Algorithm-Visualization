@@ -2,14 +2,15 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Events;
 using Algorithms;
+// using Actions;
 
 namespace RestControllers {
 
     [ApiController]
-    [Route("sorting")]
+    [Route(Actions.SORTING)]
     public class RestController : ControllerBase {
 
-		[HttpGet("bubbleSort")]
+		[HttpGet(Actions.BUBBLESORT)]
 		public ActionResult<IEnumerable<Event>> GetBubbleSortAlgorithm() {
 
 			BubbleSortAlgorithm bubbleSort = new BubbleSortAlgorithm();
@@ -19,7 +20,7 @@ namespace RestControllers {
 			return Ok(eventList);
 		}
 
-        [HttpGet("bucketSort")]
+        [HttpGet(Actions.BUCKETSORT)]
         public ActionResult<IEnumerable<Event>> GetBucketSortAlgorithm() {
 
             BucketSortAlgorithm bucketSort = new BucketSortAlgorithm();
@@ -29,7 +30,7 @@ namespace RestControllers {
             return Ok(eventList);
         }
 
-        [HttpGet("combSort")]
+        [HttpGet(Actions.COMBSORT)]
         public ActionResult<IEnumerable<Event>> GetCombSortAlgorithm() {
 
             CombSortAlgorithm combSortAlgorithm = new CombSortAlgorithm();
@@ -39,7 +40,7 @@ namespace RestControllers {
             return Ok(eventList);
         }
 
-        [HttpGet("countingSort")]
+        [HttpGet(Actions.COUNTINGSORT)]
         public ActionResult<IEnumerable<Event>> GetCountingSortAlgorithm() {
 
             CountingSortAlgorithm countingSort = new CountingSortAlgorithm();
@@ -49,7 +50,7 @@ namespace RestControllers {
             return Ok(eventList);
         }
 
-        [HttpGet("cycleSort")]
+        [HttpGet(Actions.CYCLESORT)]
         public ActionResult<IEnumerable<Event>> GetCycleSortAlgorithm() {
 
             CycleSortAlgorithm cycleSort = new CycleSortAlgorithm();
@@ -59,7 +60,7 @@ namespace RestControllers {
             return Ok(eventList);
         }
 
-        [HttpGet("heapSort")]
+        [HttpGet(Actions.HEAPSORT)]
         public ActionResult<IEnumerable<Event>> GetHeapSortAlgorithm() {
 
             HeapSortAlgorithm heapSort = new HeapSortAlgorithm();
@@ -69,7 +70,7 @@ namespace RestControllers {
             return Ok(eventList);
         }
 
-        [HttpGet("insertionSort")]
+        [HttpGet(Actions.INSERTIONSORT)]
 		public ActionResult<IEnumerable<Event>> GetInsertionSortAlgorithm() {
 
 			InsertionSortAlgorithm insertionSortAlgorithm = new InsertionSortAlgorithm();
@@ -79,7 +80,7 @@ namespace RestControllers {
 			return Ok(eventList);
 		}
 
-        [HttpGet("introSort")]
+        [HttpGet(Actions.INTROSORT)]
         public ActionResult<IEnumerable<Event>> GetIntroSortAlgorithm() {
 
             IntroSortAlgorithm introSort = new IntroSortAlgorithm();
@@ -89,7 +90,7 @@ namespace RestControllers {
             return Ok(eventList);
         }
 
-        [HttpGet("mergeSort")]
+        [HttpGet(Actions.MERGESORT)]
 		public ActionResult<IEnumerable<Event>> GetMergeSortAlgorithm() {
 
 			MergeSortAlgorithm mergeSort = new MergeSortAlgorithm();
@@ -99,7 +100,7 @@ namespace RestControllers {
 			return Ok(eventList);
 		}
 
-        [HttpGet("pigeonholeSort")]
+        [HttpGet(Actions.PIGEONHOLESORT)]
         public ActionResult<IEnumerable<Event>> GetPigeonholeSortAlgorithm() {
 
             PigeonholeSortAlgorithm pigeonholeSort = new PigeonholeSortAlgorithm();
@@ -109,7 +110,7 @@ namespace RestControllers {
             return Ok(eventList);
         }
 
-        [HttpGet("quickSort")]
+        [HttpGet(Actions.QUICKSORT)]
 		public ActionResult<IEnumerable<Event>> GetQuickSortAlgorithm() {
 
 			QuickSortAlgorithm quickSort = new QuickSortAlgorithm();
@@ -119,7 +120,7 @@ namespace RestControllers {
 			return Ok(eventList);
 		}
 
-        [HttpGet("radixSort")]
+        [HttpGet(Actions.RADIXSORT)]
         public ActionResult<IEnumerable<Event>> GetRadixSortAlgorithm() {
 
             RadixSortAlgorithm radixSortAlgorithm = new RadixSortAlgorithm();
@@ -129,7 +130,7 @@ namespace RestControllers {
             return Ok(eventList);
         }
 
-        [HttpGet("selectionSort")]
+        [HttpGet(Actions.SELECTIONSORT)]
 		public ActionResult<IEnumerable<Event>> GetSelectionSortAlgorithm() {
 
 			SelectionSortAlgorithm selectionSort = new SelectionSortAlgorithm();
@@ -139,7 +140,7 @@ namespace RestControllers {
 			return Ok(eventList);
 		}
 
-        [HttpGet("shellSort")]
+        [HttpGet(Actions.SHELLSORT)]
         public ActionResult<IEnumerable<Event>> GetShellSortAlgorithm() {
 
             ShellSortAlgorithm shellSort = new ShellSortAlgorithm();
@@ -149,7 +150,7 @@ namespace RestControllers {
             return Ok(eventList);
         }
 
-        [HttpGet("timSort")]
+        [HttpGet(Actions.TIMSORT)]
         public ActionResult<IEnumerable<Event>> GetTimSortAlgorithm() {
 
             TimSortAlgorithm timSort = new TimSortAlgorithm();

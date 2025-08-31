@@ -1,13 +1,12 @@
-using Sorting_Algorithm_Server.Server.Snippets;
-
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var ALLOWALL = "AllowAll";
+var LOCALHOST = "https://localhost:7000";
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
 builder.Services.AddCors(options => {
-    options.AddPolicy("AllowAll", policy => {
+    options.AddPolicy(ALLOWALL, policy => {
         policy.AllowAnyOrigin()
               .AllowAnyMethod()
               .AllowAnyHeader();
@@ -16,12 +15,8 @@ builder.Services.AddCors(options => {
 
 var app = builder.Build();
 
-// app.UseWebSockets();
-
-app.UseCors("AllowAll");
+app.UseCors(ALLOWALL);
 
 app.MapControllers();
 
-app.Run("https://localhost:7000");
-
-
+app.Run(LOCALHOST);

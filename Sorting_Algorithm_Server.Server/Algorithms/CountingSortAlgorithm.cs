@@ -2,17 +2,16 @@ using Events;
 
 namespace Algorithms {
 
-    class CountingSortAlgorithm : ISortingStrategy {
+    class CountingSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        List<Event> eventList = new List<Event>();
+        private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
             int[] array = GenerateRandomArray.GetRandomArray();
 
-            Event _event = new Event(array, 0);
-            eventList.Add(_event);
-
+            CreateEvent(array, 0);
             CountingSort(array);
 
             return eventList;
@@ -23,11 +22,11 @@ namespace Algorithms {
             var maxElement = GetMax(array, size);
             var occurrences = new int[maxElement + 1];
 
-            for(int i = 0; i < maxElement + 1; i++) {
+            for (int i = 0; i < maxElement + 1; i++) {
                 occurrences[i] = 0;
             }
 
-            for(int i = 0; i < size; i++) {
+            for (int i = 0; i < size; i++) {
                 occurrences[array[i]]++;
             }
 
@@ -37,8 +36,7 @@ namespace Algorithms {
                     j++;
                     occurrences[i]--;
 
-                    Event _event = new Event((int[])array.Clone(), i);
-                    eventList.Add(_event);
+                    CreateEvent(array, i);
                 }
             }
         }
@@ -46,12 +44,17 @@ namespace Algorithms {
         private int GetMax(int[] array, int size) {
             var maxVal = array[0];
 
-            for(int i = 1; i < size; i++) {
+            for (int i = 1; i < size; i++) {
                 if (array[i] > maxVal) {
                     maxVal = array[i];
                 }
             }
             return maxVal;
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }

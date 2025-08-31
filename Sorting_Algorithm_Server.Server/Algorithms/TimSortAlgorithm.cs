@@ -1,22 +1,16 @@
-// https://www.geeksforgeeks.org/dsa/timsort/
 using Events;
 
 namespace Algorithms {
 
-    class TimSortAlgorithm {
+    class TimSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        private const int ARRAY_SIZE = 232;
         private int RUN = 32;
-        List<Event> eventList = new List<Event>();
         private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
-            int[] array = GenerateRandomArray.GetRandomArray();
-
-            _event = new Event(array, 0);
-            eventList.Add(_event);
-
+            CreateEvent(array, 0);
             TimSort(array);
 
             return eventList;
@@ -40,72 +34,72 @@ namespace Algorithms {
         }
 
         private void InsertionSort(int[] array, int left, int right) {
-            for(int i = left +1; i <= right; i++) {
+            for (int i = left +1; i <= right; i++) {
                 int temp = array[i];
                 int j = i - 1;
 
-                while(j >= left && array[j] > temp) {
+                while (j >= left && array[j] > temp) {
                     array[j + 1] = array[j];
                     j--;
 
-                    _event = new Event((int[])array.Clone(), temp);
-                    eventList.Add(_event);
+                    CreateEvent(array, temp);
                 }
                 array[j + 1] = temp;
             }
         }
 
-        private void Merge(int[] array, int l, int m, int r) {
-            int len1 = m - l + 1, len2 = r - m;
-            int[] left = new int[len1];
-            int[] right = new int[len2];
+        private void Merge(int[] array, int left, int middle, int right) {
+            int length1 = middle - left + 1, length2 = right - middle;
+            int[] leftArray = new int[length1];
+            int[] rightArray = new int[length2];
 
-            for(int x = 0; x < len1; x++) {
-                left[x] = array[l + x];
+            for (int x = 0; x < length1; x++) {
+                leftArray[x] = array[left + x];
             }
 
-            for(int x = 0; x < len2; x++) {
-                right[x] = array[m + 1 + x];
+            for (int x = 0; x < length2; x++) {
+                rightArray[x] = array[middle + 1 + x];
             }
 
             int i = 0;
             int j = 0;
-            int k = l;
+            int k = left;
 
-            while(i < len1 && j < len2) {
-                if (left[i] <= right[j]) {
-                    array[k] = left[i];
+            while (i < length1 && j < length2) {
+                if (leftArray[i] <= rightArray[j]) {
+                    array[k] = leftArray[i];
                     i++;
 
-                    _event = new Event((int[])array.Clone(), i);
-                    eventList.Add(_event);
+                    CreateEvent(array, i);
                 } else {
-                    array[k] = right[j];
+                    array[k] = rightArray[j];
                     j++;
 
-                    _event = new Event((int[])array.Clone(), j);
-                    eventList.Add(_event);
+                    CreateEvent(array, j);
                 }
                 k++;
             }
 
-            while(i <len1) {
-                array[k] = left[i];
+            while (i < length1) {
+                array[k] = leftArray[i];
                 k++;
                 i++;
 
-                _event = new Event((int[])array.Clone(), i);
-                eventList.Add(_event);
+                CreateEvent(array, i);
             }
 
-            while(j < len2) {
-                array[k] = right[j];
+            while (j < length2) {
+                array[k] = rightArray[j];
                 k++;
                 j++;
 
-                _event = new Event((int[])array.Clone(), j);
-                eventList.Add(_event);
+                CreateEvent(array, j);
             }
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }

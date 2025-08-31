@@ -1,27 +1,21 @@
-using System.Net.WebSockets;
-using System.Text;
-using System.Text.Json;
 using Events;
 
 namespace Algorithms {
 
-    class QuickSortAlgorithm : ISortingStrategy {
+    class QuickSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        List<Event> eventList = new List<Event>();
+        private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
-            int[] array = GenerateRandomArray.GetRandomArray();
-
-            Event _event = new Event(array, 0);
-            eventList.Add(_event);
-
+            CreateEvent(array, 0);
             QuickSort(array, 0, array.Length - 1);
 
             return eventList;
         }
 
-        private static int Partition(int[] array, int low, int high) {
+        private int Partition(int[] array, int low, int high) {
             int pivot = array[high];
 
             int i = low - 1;
@@ -32,27 +26,32 @@ namespace Algorithms {
                     Swap(array, i, j);
                 }
             }
-
             Swap(array, i + 1, high);
             return i + 1;
         }
 
-        private static void Swap(int[] array, int i, int j) {
+        private void Swap(int[] array, int i, int j) {
             int temp = array[i];
             array[i] = array[j];
             array[j] = temp;
+
+            CreateEvent(array, temp);
         }
 
         private void QuickSort(int[] array, int low, int high) {
             if (low < high) {
                 int pi = Partition(array, low, high);
 
-                Event _event = new Event((int[])array.Clone(), pi);
-                eventList.Add(_event);
+                CreateEvent(array, pi);
 
                 QuickSort(array, low, pi - 1);
                 QuickSort(array, pi + 1, high);
             }
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }

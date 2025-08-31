@@ -1,21 +1,17 @@
-using System.Net.WebSockets;
-using System.Text;
-using System.Text.Json;
 using Events;
 
 namespace Algorithms {
 
-    class MergeSortAlgorithm : ISortingStrategy {
+    class MergeSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        List<Event> eventList = new List<Event>();
+        private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
             int[] array = GenerateRandomArray.GetRandomArray();
 
-            Event _event = new Event(array, 0);
-            eventList.Add(_event);
-
+            CreateEvent(array, 0);
             MergeSort(array, 0, array.Length - 1);
 
             return eventList;
@@ -24,12 +20,12 @@ namespace Algorithms {
         private void MergeSort(int[] array, int left, int right) {
             if (left < right) {
                 int middle = (left + right) / 2;
+
                 MergeSort(array, left, middle);
                 MergeSort(array, middle + 1, right);
-                Merge(array, left, middle, right);
 
-                Event _event = new Event((int[])array.Clone(), middle);
-                eventList.Add(_event);
+                Merge(array, left, middle, right);
+                CreateEvent(array, middle);
             }
         }
 
@@ -60,6 +56,11 @@ namespace Algorithms {
                 l++;
                 j++;
             }
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }

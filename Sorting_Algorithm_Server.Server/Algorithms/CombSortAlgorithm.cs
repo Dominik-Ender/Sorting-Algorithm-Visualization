@@ -1,19 +1,15 @@
-// https://www.geeksforgeeks.org/dsa/comb-sort/
 using Events;
 
 namespace Algorithms {
 
-    class CombSortAlgorithm : ISortingStrategy {
+    class CombSortAlgorithm : ISortingStrategy, IEventCreate {
 
-        List<Event> eventList = new List<Event>();
+        private Event _event;
+        private List<Event> eventList = new List<Event>();
+        private int[] array = GenerateRandomArray.GetRandomArray();
 
         public List<Event> GetEventList() {
-
-            int[] array = GenerateRandomArray.GetRandomArray();
-
-            Event _event = new Event(array, 0);
-            eventList.Add(_event);
-
+            CreateEvent(array, 0);
             CombSort(array);
 
             return eventList;
@@ -26,12 +22,12 @@ namespace Algorithms {
 
             bool swapped = true;
 
-            while(gap != 1 || swapped == true) {
+            while (gap != 1 || swapped == true) {
                 gap = GetNextGap(gap);
 
                 swapped = false;
 
-                for(int i = 0; i < n - gap; i++) {
+                for (int i = 0; i < n - gap; i++) {
                     if (array[i] > array[i + gap]) {
                         int temp = array[i];
                         array[i] = array[i + gap];
@@ -39,8 +35,7 @@ namespace Algorithms {
 
                         swapped = true;
 
-                        Event _event = new Event((int[])array.Clone(), i);
-                        eventList.Add(_event);
+                        CreateEvent(array, i);
                     }
                 }
             }
@@ -53,6 +48,11 @@ namespace Algorithms {
                 return 1;
             }
             return gap;
+        }
+
+        public void CreateEvent(int[] array, int index) {
+            _event = new Event((int[])array.Clone(), index);
+            eventList.Add(_event);
         }
     }
 }
