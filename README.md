@@ -32,9 +32,6 @@ Turn on volume for sound. <br>
 - go to **<Sorting_Algorithm_Visualization\Sorting_Algorithm_Server.Server>**
 - enter **dotnet run**
 
-<img width="1880" height="544" alt="Unsorted" src="https://github.com/user-attachments/assets/f39eb411-0f4a-45d8-a580-0302b89cf6ee" />
+<img width="1889" height="390" alt="Unsorted" src="https://github.com/user-attachments/assets/dcea7900-a077-4268-b5d0-21182c4618d2" />
 
-
-<img width="1881" height="546" alt="Sorted" src="https://github.com/user-attachments/assets/290df5d7-8d62-4789-bfa1-7375300c5d0d" />
-
-
+<img width="1890" height="390" alt="Sorted" src="https://github.com/user-attachments/assets/a018b504-48cf-4438-b0d8-5bfb603b4278" />
